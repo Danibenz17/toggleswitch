@@ -1,0 +1,45 @@
+.toggle-switch {
+    display: inline-block;
+    position: relative;
+    user-select: none;
+  }
+  
+  .toggle-switch label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .toggle-switch input {
+    display: none;
+  }
+  
+  .toggle-switch .slider {
+    position: relative;
+    cursor: pointer;
+    height: 34px;
+    width: 70px;
+    background-color: #afafaf;
+    border-radius: 34px;
+  }
+  
+  .toggle-switch .slider:before {
+    content: "";
+    height: 26px;
+    width: 26px;
+    background-color: white;
+    transition: 0.5s;
+    border-radius: 50%;
+    position: absolute;
+    left: 4px;
+    top: 4px;
+  }
+  
+  .toggle-switch input:checked ~ .slider {
+    background-color: #000000;
+  }
+  
+  .toggle-switch input:checked ~ .slider:before {
+    transform: translateX(40px);
+  }
+  
