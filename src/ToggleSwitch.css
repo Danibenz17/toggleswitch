@@ -35,11 +35,40 @@
     top: 4px;
   }
   
+  .toggle-switch .right-label {
+    position: absolute;
+    font-size: 10px;
+    left: 35px;
+    top: 12px;
+    color: rgb(0, 0, 0);
+    opacity: 1; 
+    transition: 0.5s;
+  }
+  
+  .toggle-switch .left-label {
+    position: absolute;
+    font-size: 10px;
+    left: 10px; 
+    top: 12px; 
+    color: rgb(255, 255, 255);
+    opacity: 0; 
+    transition: 0.5s;
+  }
+  
   .toggle-switch input:checked ~ .slider {
     background-color: #000000;
   }
   
   .toggle-switch input:checked ~ .slider:before {
     transform: translateX(40px);
+  }
+  
+  .toggle-switch input:checked ~ .right-label{
+    opacity: 0;
+
+  }
+  
+  .toggle-switch input:checked ~ .left-label {
+    opacity: 1;
   }
   

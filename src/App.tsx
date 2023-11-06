@@ -9,8 +9,8 @@ function App() {
   return (
     <div>
       <ToggleSwitch
-        leftLabel="Off"
-        rightLabel="On"
+        leftLabel="LIGHT"
+        rightLabel="DARK"
         onToggle={handleToggle}
         initialChecked={false}
       />

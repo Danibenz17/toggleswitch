@@ -24,10 +24,10 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   return (
     <div className="toggle-switch">
       <label>
-        {leftLabel}
         <input type="checkbox" checked={isChecked} onChange={handleToggle} />
         <span className="slider round"></span>
-        {rightLabel}
+        <span className="left-label">{leftLabel}</span>
+        <span className="right-label">{rightLabel}</span>
       </label>
     </div>
   );
