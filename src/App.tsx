@@ -1,5 +1,6 @@
-import ToggleSwitch from "./ToggleSwitch";
+import PillToggleSwitch from "./Pill";
 import "./ToggleSwitch.css";
+import "./Pill.css"
 
 function App() {
   const handleToggle = (isChecked: boolean) => {
@@ -8,12 +9,7 @@ function App() {
 
   return (
     <div>
-      <ToggleSwitch
-        leftLabel="LIGHT"
-        rightLabel="DARK"
-        onToggle={handleToggle}
-        initialChecked={false}
-      />
+      <PillToggleSwitch />
     </div>
   );
 }

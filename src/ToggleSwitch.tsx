@@ -26,7 +26,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
       <label>
         <input type="checkbox" checked={isChecked} onChange={handleToggle} />
         <span className="slider round"></span>
-        <span className="left-label">{leftLabel}</span>
+         <span className="left-label">{leftLabel}</span> 
         <span className="right-label">{rightLabel}</span>
       </label>
     </div>

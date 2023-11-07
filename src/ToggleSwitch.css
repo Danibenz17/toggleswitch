@@ -2,6 +2,7 @@
     display: inline-block;
     position: relative;
     user-select: none;
+    left: 100px;
   }
   
   .toggle-switch label {
