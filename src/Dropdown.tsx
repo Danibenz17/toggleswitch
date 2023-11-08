@@ -1,97 +1,94 @@
-import React, { useState, useContext } from "react";
-import ToggleSwitch from "./ToggleSwitch";
+import React, { useState } from 'react';
+import PillToggleSwitch from './Pill';
 
-interface DropdownProps {
-  data: {
-    key: string;
-    label: string;
-    options: { id: number | string; label: string }[];
-  }[];
-}
+export type SubOption = {
+  id: number;
+  label: string;
+  selected: boolean;
+};
 
-const Dropdown: React.FC<DropdownProps> = ({ data }) => {
-  const [selectedMainOption, setSelectedMainOption] = useState<string | null>(
-    null
-  );
-  const [selectedSubOptions, setSelectedSubOptions] = useState<string[]>([]);
-  const [includeMode, setIncludeMode] = useState<boolean>(true);
+type MainOption = {
+  key: string;
+  label: string;
+  options: SubOption[];
+};
 
-  const handleMainOptionSelect = (mainOption: string) => {
-    setSelectedMainOption(mainOption);
+const sampleData: MainOption[] = [
+  {
+    key: 'option1',
+    label: 'Royal Enfield',
+    options: [
+      { id: 1, label: 'Interceptor 650', selected: false },
+      { id: 2, label: 'Classic 350', selected: false },
+      { id: 3, label: 'Himalayan', selected: false },
+    ],
+  },
+  {
+    key: 'option2',
+    label: 'Yamaha',
+    options: [
+      { id: 4, label: 'R15', selected: false },
+      { id: 5, label: 'MT150', selected: false },
+    ],
+  },
+  {
+    key: 'option3',
+    label: 'Honda',
+    options: [
+      { id: 6, label: 'Shine', selected: false },
+      { id: 7, label: 'Unicorn', selected: false },
+      { id: 8, label: 'Activa', selected: false },
+    ],
+  },
+];
+
+const Dropdown: React.FC = () => {
+  const [selectedMainOption, setSelectedMainOption] = useState<MainOption | null>(null);
+  const [subOptions, setSubOptions] = useState<SubOption[]>([]);
+
+  const handleMainOptionChange = (key: string) => {
+    const option = sampleData.find((option) => option.key === key);
+    setSelectedMainOption(option || null);
+    setSubOptions(option ? option.options : []);
   };
 
-  const handleSubOptionSelect = (subOption: string) => {
-    if (selectedSubOptions.includes(subOption)) {
-      setSelectedSubOptions(
-        selectedSubOptions.filter((option) => option !== subOption)
-      );
-    } else {
-      setSelectedSubOptions([...selectedSubOptions, subOption]);
-    }
-  };
-
-  const toggleIncludeMode = () => {
-    setIncludeMode(!includeMode);
+  const handleSubOptionClick = (subOption: SubOption) => {
+    setSubOptions((prevSubOptions) =>
+      prevSubOptions.map((opt) =>
+        opt.id === subOption.id ? { ...opt, selected: !opt.selected } : opt
+      )
+    );
   };
 
   return (
-    <div>
+    <div className="dropdown-container">
       <select
-        value={selectedMainOption || ""}
-        onChange={(e) => handleMainOptionSelect(e.target.value)}
+        value={selectedMainOption ? selectedMainOption.key : ''}
+        onChange={(e) => handleMainOptionChange(e.target.value)}
       >
         <option value="">Select</option>
-        {data.map((mainOption) => (
-          <option key={mainOption.key} value={mainOption.key}>
-            {mainOption.label}
+        {sampleData.map((option) => (
+          <option key={option.key} value={option.key}>
+            {option.label}
           </option>
         ))}
       </select>
-
       {selectedMainOption && (
-        <div>
-          <div>
-            <label>
-              Main option:{" "}
-              {data.find((main) => main.key === selectedMainOption)?.label}
-            </label>
-          </div>
-          <div>
-            {data
-              .find((main) => main.key === selectedMainOption)
-              ?.options.map((subOption) => (
-                <div key={subOption.id}>
-                  <input
-                    type="checkbox"
-                    value={subOption.id}
-                    checked={selectedSubOptions.includes(
-                      subOption.id.toString()
-                    )}
-                    onChange={() =>
-                      handleSubOptionSelect(subOption.id.toString())
-                    }
-                  />
-                  {subOption.label}
-                </div>
-              ))}
-          </div>
+        <div className="sub-options">
+          {subOptions.map((subOption) => (
+            <div key={subOption.id} className="sub-option">
+              <input
+                type="checkbox"
+                id={`subOption-${subOption.id}`}
+                checked={subOption.selected}
+                onChange={() => handleSubOptionClick(subOption)}
+              />
+              <label htmlFor={`subOption-${subOption.id}`}>{subOption.label}</label>
+            </div>
+          ))}
         </div>
       )}
-
-      {selectedMainOption && selectedSubOptions.length > 0 && (
-        <div>
-          <div>
-            Filter Pill:{" "}
-            {data.find((main) => main.key === selectedMainOption)?.label}:{" "}
-            {selectedSubOptions.join(" or ")}{" "}
-            <ToggleSwitch
-              onToggle={toggleIncludeMode}
-              leftLabel={"Inclue"}
-              rightLabel={"Exclude"}
-            />
-          </div>
-        </div>
-      )}
+      <PillToggleSwitch selectedSubOptions={subOptions} />
     </div>
   );
 };

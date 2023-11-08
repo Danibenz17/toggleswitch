@@ -1,15 +1,12 @@
-import PillToggleSwitch from "./Pill";
 import "./ToggleSwitch.css";
-import "./Pill.css"
+import "./Pill.css";
+import "./Dropdown.css"
+import Dropdown from "./Dropdown";
 
 function App() {
-  const handleToggle = (isChecked: boolean) => {
-    console.log(`Toggle switch is ${isChecked ? "on" : "off"}`);
-  };
-
   return (
     <div>
-      <PillToggleSwitch />
+      <Dropdown />
     </div>
   );
 }
