@@ -1,43 +1,49 @@
 .dropdown-container {
-    display: flex;
-    flex-direction: column;
-    width: 300px; 
-    padding: 10px;
-    background-color: #fff;
-  }
-  
-  select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    font-size: 16px;
-  }
-  
-  .sub-options {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .sub-option {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
-  }
-  
-  input[type="checkbox"] {
-    margin-right: 10px;
-  }
-  
-  label {
-    cursor: pointer;
-  }
-  
-  .app-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
+  position: relative;
+  display: inline-block;
+}
+
+.select-text {
+  cursor: pointer;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.select-arrow {
+  margin-left: 5px;
+}
+
+.options-dropdown {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.option {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.submenu {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  z-index: 1;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.sub-option {
+  padding: 8px;
+  cursor: pointer;
+}

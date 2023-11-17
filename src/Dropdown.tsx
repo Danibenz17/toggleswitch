@@ -1,96 +1,123 @@
-import React, { useState } from 'react';
-import PillToggleSwitch from './Pill';
+import React, { useEffect, useRef, useState } from "react";
+import "./Dropdown.css";
 
-export type SubOption = {
+export interface SubOption {
   id: number;
   label: string;
-  selected: boolean;
-};
+  selected?: boolean;
+}
 
-type MainOption = {
+interface MainOption {
   key: string;
   label: string;
   options: SubOption[];
-};
+}
 
 const sampleData: MainOption[] = [
   {
-    key: 'option1',
-    label: 'Royal Enfield',
+    key: "option1",
+    label: "Royal Enfield",
     options: [
-      { id: 1, label: 'Interceptor 650', selected: false },
-      { id: 2, label: 'Classic 350', selected: false },
-      { id: 3, label: 'Himalayan', selected: false },
+      { id: 1, label: "Interceptor 650" },
+      { id: 2, label: "Classic 350" },
+      { id: 3, label: "Himalayan" },
     ],
   },
   {
-    key: 'option2',
-    label: 'Yamaha',
+    key: "option2",
+    label: "Yamaha",
     options: [
-      { id: 4, label: 'R15', selected: false },
-      { id: 5, label: 'MT150', selected: false },
+      { id: 4, label: "R15" },
+      { id: 5, label: "MT150" },
     ],
   },
   {
-    key: 'option3',
-    label: 'Honda',
+    key: "option3",
+    label: "Honda",
     options: [
-      { id: 6, label: 'Shine', selected: false },
-      { id: 7, label: 'Unicorn', selected: false },
-      { id: 8, label: 'Activa', selected: false },
+      { id: 6, label: "Shine" },
+      { id: 7, label: "Unicorn" },
+      { id: 8, label: "Activa" },
     ],
   },
 ];
 
-const Dropdown: React.FC = () => {
-  const [selectedMainOption, setSelectedMainOption] = useState<MainOption | null>(null);
-  const [subOptions, setSubOptions] = useState<SubOption[]>([]);
+const Dropdown = () => {
+  const [openMain, setOpenMain] = useState<string | null>(null);
+  const mainMenuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLDivElement>(null);
 
-  const handleMainOptionChange = (key: string) => {
-    const option = sampleData.find((option) => option.key === key);
-    setSelectedMainOption(option || null);
-    setSubOptions(option ? option.options : []);
+  const handleMainOptionClick = (optionKey: string) => {
+    setOpenMain((prev) => (prev === optionKey ? null : optionKey));
   };
 
-  const handleSubOptionClick = (subOption: SubOption) => {
-    setSubOptions((prevSubOptions) =>
-      prevSubOptions.map((opt) =>
-        opt.id === subOption.id ? { ...opt, selected: !opt.selected } : opt
-      )
-    );
+  const handleSubMenuClick = (subOptionLabel: string) => {
+    console.log("Selected:", subOptionLabel);
+    setOpenMain(null);
+  };
+
+  const handleBlur = (event: React.FocusEvent<HTMLDivElement>) => {
+    const currentTarget = event.currentTarget;
+
+    setTimeout(() => {
+      if (
+        !currentTarget.contains(document.activeElement) &&
+        openMain &&
+        mainMenuRef.current &&
+        !mainMenuRef.current.contains(document.activeElement)
+      ) {
+        setOpenMain(null);
+      }
+    }, 0);
   };
 
   return (
-    <div className="dropdown-container">
-      <select
-        value={selectedMainOption ? selectedMainOption.key : ''}
-        onChange={(e) => handleMainOptionChange(e.target.value)}
+    <div className="dropdown-container" onBlur={handleBlur} tabIndex={0}>
+      <div
+        className="select-text"
+        ref={buttonRef}
+        onClick={() => setOpenMain((prev) => (prev ? null : "main"))}
       >
-        <option value="">Select</option>
-        {sampleData.map((option) => (
-          <option key={option.key} value={option.key}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      {selectedMainOption && (
-        <div className="sub-options">
-          {subOptions.map((subOption) => (
-            <div key={subOption.id} className="sub-option">
-              <input
-                type="checkbox"
-                id={`subOption-${subOption.id}`}
-                checked={subOption.selected}
-                onChange={() => handleSubOptionClick(subOption)}
-              />
-              <label htmlFor={`subOption-${subOption.id}`}>{subOption.label}</label>
+        Select
+        <span className={`select-arrow ${openMain ? "open" : ""}`}>
+          &#9662;
+        </span>
+      </div>
+      {openMain && (
+        <div className="options-dropdown" ref={mainMenuRef} >
+          {sampleData.map((option) => (
+            <div
+              key={option.key}
+              className="option"
+              onClick={() => handleMainOptionClick(option.key)}
+            >
+              {option.label}
             </div>
           ))}
         </div>
       )}
-      <PillToggleSwitch selectedSubOptions={subOptions} />
+      {sampleData.map((option) => (
+        <div key={option.key}>
+          {openMain === option.key && (
+            <div className="submenu">
+              {option.options.map((subOption) => (
+                <div
+                  key={subOption.id}
+                  className="sub-option"
+                  onClick={() => handleSubMenuClick(subOption.label)}
+                >
+                  {subOption.label}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 };
 
 export default Dropdown;
+
+
+
