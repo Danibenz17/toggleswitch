@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { createContext, useReducer, useContext, useState } from "react";
 
 interface RowData {
   id: number;
@@ -97,6 +97,7 @@ const reducer = (state: State, action: Action): State => {
       return state;
   }
 };
+
 
 const DataTable = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
