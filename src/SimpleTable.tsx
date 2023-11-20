@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { createContext, useReducer, useContext, useState, ReactNode } from "react";
 
 interface RowData {
   id: number;
@@ -98,13 +98,42 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-const DataTable = () => {
+interface TableContextProps {
+  state: State;
+  dispatch: React.Dispatch<Action>;
+}
+
+const TableContext = createContext<TableContextProps | undefined>(undefined);
+
+interface DataTableProviderProps {
+  children: ReactNode;
+}
+
+export function DataTableProvider({ children }: DataTableProviderProps) {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  return (
+    <TableContext.Provider value={{ state, dispatch }}>
+      {children}
+    </TableContext.Provider>
+  );
+};
+
+const useTable = () => {
+  const context = useContext(TableContext);
+  if (!context) {
+    throw new Error("useTable must be used within a DataTableProvider");
+  }
+  return context;
+};
+
+
+const DataTable = () => {
+  const { state, dispatch } = useTable();
   const { selectedRows, selectAll, rows } = state;
   const [newName, setNewName] = useState<string>("");
   const [newAge, setNewAge] = useState<number>(0);
   const [newUg, setNewUg] = useState<string>("");
-
   const handleKeyDown = (e: { key: string }) => {
     if (e.key === "ArrowUp" || e.key === "ArrowDown") {
       const checkboxes = document.querySelectorAll<HTMLInputElement>(
