@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import ToggleSwitch from "./ToggleSwitch";
-import { SubOption } from "./Dropdown";
 
+ interface SubOption {
+  id: number;
+  label: string;
+  selected?: boolean;
+}
 interface PillToggleSwitchProps {
   selectedSubOptions: SubOption[];
 }

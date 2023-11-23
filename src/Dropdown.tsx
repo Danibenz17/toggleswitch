@@ -1,9 +1,13 @@
-import React, { CSSProperties, useRef, useState } from "react";
+import React, {
+  CSSProperties,
+  FocusEventHandler,
+  useRef,
+  useState,
+} from "react";
 
 export interface SubOption {
   id: number;
   label: string;
-  selected?: boolean;
 }
 
 interface MainOption {
@@ -42,22 +46,29 @@ const sampleData: MainOption[] = [
 ];
 
 const Dropdown = () => {
-  const [openMain, setOpenMain] = useState<string | null>(null);
+  const [openMain, setOpenMain] = useState<string | null>();
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [submenuSearchQuery, setSubmenuSearchQuery] = useState<string>("");
   const mainMenuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
   const submenuRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const handleMainOptionClick = (optionKey: string) => {
-    setOpenMain((prev) => (prev === optionKey ? null : optionKey));
+    if (openMain === optionKey) {
+      setOpenMain(null);
+    } else {
+      setOpenMain(optionKey);
+    }
   };
 
   const handleSubMenuClick = (subOptionLabel: string) => {
     console.log("Selected:", subOptionLabel);
     setOpenMain(null);
+    setSubmenuSearchQuery("");
   };
-  const dani = handleSubMenuClick
 
-  const handleBlur = (event: { currentTarget: any; }) => {
+  const handleBlur: FocusEventHandler<HTMLDivElement> = (event) => {
+    event.stopPropagation();
     const currentTarget = event.currentTarget;
 
     setTimeout(() => {
@@ -67,10 +78,13 @@ const Dropdown = () => {
         mainMenuRef.current &&
         !mainMenuRef.current.contains(document.activeElement)
       ) {
+        setSearchQuery("");
         setOpenMain(null);
+        setSubmenuSearchQuery("");
       }
     }, 0);
   };
+
   const handleSubmenuPosition = (optionkey: string) => {
     const mainmenu = mainMenuRef.current?.querySelector(
       `[data-key = "${optionkey}"]`
@@ -100,6 +114,28 @@ const Dropdown = () => {
     display: "block",
   };
 
+  const handleSearchChange = (e: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
+    setSearchQuery(e.target.value);
+  };
+  const handleSubmenuSearchChange = (e: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
+    setSubmenuSearchQuery(e.target.value);
+  };
+
+  const filteredOptions = sampleData.filter((option) =>
+    option.label.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredSubmenuOptions = sampleData.map((option) => ({
+    key: option.key,
+    label: option.label,
+    options: option.options.filter((subOption) =>
+      subOption.label.toLowerCase().includes(submenuSearchQuery.toLowerCase())
+    ),
+  }));
   return (
     <div className="dropdown-container" onBlur={handleBlur} tabIndex={0}>
       <div
@@ -114,7 +150,16 @@ const Dropdown = () => {
       </div>
       {openMain && (
         <div className="options-dropdown" ref={mainMenuRef}>
-          {sampleData.map((option) => (
+          <div className="search-container">
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </div>
+          {filteredOptions.map((option) => (
             <div
               key={option.key}
               className="option"
@@ -130,16 +175,26 @@ const Dropdown = () => {
                   ...submenuStyle,
                   ...handleSubmenuPosition(option.key),
                 }}
+                onClick={(e) => e.stopPropagation()}
               >
                 {openMain === option.key && (
                   <div className="submenu">
-                    {option.options.map((subOption) => (
-                      <div
-                        key={subOption.id}
-                        className="sub-option"
-                        onClick={() => dani(subOption.label)}
-                      >
-                        {subOption.label}
+                    <input
+                      type="text"
+                      className="search-input"
+                      placeholder="Search..."
+                      value={submenuSearchQuery}
+                      onChange={handleSubmenuSearchChange}
+                    />
+                    {filteredSubmenuOptions
+                      .find((opt) => opt.key === option.key)
+                      ?.options.map((subOption) => (
+                        <div
+                          key={subOption.id}
+                          className="sub-option"
+                          onClick={() => handleSubMenuClick(subOption.label)}
+                        >
+                          {subOption.label}
                       </div>
                     ))}
                   </div>
